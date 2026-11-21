@@ -1,11 +1,13 @@
 import './App.css'
-import FirstPage from './Pages/FirstPage'
+import Routing from './Routes/Routing'
+import { BrowserRouter } from 'react-router-dom'
 function App() {
 
   return (
     <>
-      <FirstPage />
-
+      <BrowserRouter>
+        <Routing />
+      </BrowserRouter>
     </>
   )
 }
