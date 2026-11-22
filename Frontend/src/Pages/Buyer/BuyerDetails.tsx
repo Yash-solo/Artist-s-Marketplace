@@ -1,9 +1,10 @@
+import DetailsPage from "../DetailsPage"
 
 
 const BuyerDetails = () => {
     return (
         <>
-            <h1>There is a buyer please enter your name here</h1>
+            <DetailsPage role={"Buyer"} />
         </>
     )
 }
