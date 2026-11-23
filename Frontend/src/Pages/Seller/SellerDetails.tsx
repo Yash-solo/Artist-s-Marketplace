@@ -1,5 +1,4 @@
 import DetailsPage from "../DetailsPage"
-
 const SellerDetails = () => {
     return (
         <>

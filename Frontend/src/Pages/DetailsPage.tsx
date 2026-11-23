@@ -1,6 +1,5 @@
 import back from "/src/assets/back.png";
 import { useNavigate } from "react-router-dom";
-
 //design the role type
 interface getrole {
     role: string,
@@ -79,7 +78,9 @@ const DetailsPage = (props: getrole) => {
                         <button disabled>{props.role}</button>
                     </label>
                     <br />
-                    <button type="submit" className="w-full md:text-lg cursor-pointer md:w-50 md:ml-[60%] text-black m-auto p-3 ml-auto border border-amber-400  text-2xl rounded-lg shadow-[0px_0px_5px_#ddd] bg-amber-300">Next</button>
+                    <button onClick={() => {
+                        navigation("/Home");
+                    }} type="submit" className="w-full md:text-lg cursor-pointer md:w-50 md:ml-[60%] text-black m-auto p-3 ml-auto border border-amber-400  text-2xl rounded-lg shadow-[0px_0px_5px_#ddd] bg-amber-300">Next</button>
                 </form>
             </div >
         </>
