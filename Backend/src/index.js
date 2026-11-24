@@ -1,8 +1,10 @@
 import { connectDB } from "./database/db.js";
 import mongoose from 'mongoose';
+import { signIn, getMyprofile } from "./controllers/authController.js";
 import { User } from "./models/User.model.js";
 import { app } from "./app.js";
 import "dotenv/config"
+import { DB_Name } from "./constant.js";
 
 connectDB()
 .then((res)=>{
@@ -27,10 +29,9 @@ connectDB()
 
     })
 
-    app.post("/signin",(req,res)=>{
-        console.log("Request for sign in is:- ",req.body);
-    })
+    app.post("/signin",signIn);
 
+    app.get("/Profile", getMyprofile);
 
     app.listen(process.env.PORT,()=>{
         console.log("App is listening at localhost:",process.env.PORT);

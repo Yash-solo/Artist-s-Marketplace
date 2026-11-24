@@ -1,11 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ARTIST_DATA } from "./dummydata";
 
+interface UserData {
+    avatar: string,
+    avgDeliveryDays: number,
+    bio: string,
+    city: string,
+    completedOrdersCount?: number,
+    createdAt?: string,
+    email: string,
+    isAvailableForCustom?: boolean,
+    name: string,
+    role: string,
+    updatedAt?: string,
+    username: string,
+    __v?: number,
+    _id?: string,
+}
 
 export default function ArtistProfile() {
     const [activeTab, setActiveTab] = useState("all"); // 'all' | 'ready_to_ship' | 'reviews'
     const [copied, setCopied] = useState(false);
     const [showProofMap, setShowProofMap] = useState({});
+
+    const [user, setuser] = useState<UserData>({
+        avatar: "",
+        avgDeliveryDays: 0,
+        bio: "",
+        city: "",
+        email: "",
+        name: "",
+        role: "",
+        username: ""
+    });
 
     const handleCopyLink = () => {
         navigator.clipboard.writeText(window.location.href);
@@ -21,6 +48,24 @@ export default function ArtistProfile() {
         if (activeTab === "ready_to_ship") return art.listingType === "ready_to_ship";
         return true;
     });
+
+
+    useEffect(() => {
+        const getData = async () => {
+            const response = await fetch("http://localhost:3000/Profile", {
+                method: "GET",
+                credentials: "include",
+            })
+            if (response) {
+                const data = await response.json();
+                console.log("Data is here:- ", data.user);
+                setuser(data.user);
+            }
+        }
+        getData();
+    }, [])
+
+
 
     return (
         <div className="min-h-screen bg-stone-50 text-stone-900 pb-16">
@@ -46,16 +91,16 @@ export default function ArtistProfile() {
                         />
                         <div>
                             <div className="flex flex-wrap items-center gap-2">
-                                <h1 className="text-2xl font-bold text-stone-900">{ARTIST_DATA.name}</h1>
+                                <h1 className="text-2xl font-bold text-stone-900">{user.name}</h1>
                                 <span className="text-xs bg-green-100 text-green-800 px-2.5 py-0.5 rounded-full font-semibold">
                                     ✓ {ARTIST_DATA.completedOrders} Orders Completed
                                 </span>
                             </div>
                             <p className="text-sm text-stone-500 mt-0.5">
-                                @{ARTIST_DATA.username} • 📍 {ARTIST_DATA.city}
+                                @{user.username} • 📍 {user.city}
                             </p>
                             <p className="text-sm text-stone-700 mt-3 max-w-xl leading-relaxed">
-                                {ARTIST_DATA.bio}
+                                {user.bio}
                             </p>
                             <div className="flex flex-wrap gap-2 mt-3">
                                 {ARTIST_DATA.artStyles.map((style) => (
@@ -73,7 +118,7 @@ export default function ArtistProfile() {
                     {/* Primary CTA Box */}
                     <div className="w-full md:w-auto bg-stone-50 p-4 rounded-xl border border-stone-200 text-center">
                         <span className="inline-block text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded mb-2">
-                            {ARTIST_DATA.isAvailableForCustom ? "🟢 Taking Custom Orders" : "🔴 Slots Full"}
+                            {user.isAvailableForCustom ? "🟢 Taking Custom Orders" : "🔴 Slots Full"}
                         </span>
                         <button className="w-full bg-amber-700 hover:bg-amber-800 text-white font-semibold px-6 py-2.5 rounded-lg text-sm transition shadow-sm">
                             Order Custom Sketch

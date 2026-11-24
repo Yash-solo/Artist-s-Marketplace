@@ -1,9 +1,11 @@
-import { useState, type FormEvent } from "react";
-
+import { useState, type FormEvent, } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../Contexts/authContext";
 interface LoginCredentials {
     email: string;
     password: string;
 }
+
 
 interface SignInProps {
     onLogin?: (credentials: LoginCredentials) => Promise<void>;
@@ -15,7 +17,7 @@ export default function SignIn({ onLogin }: SignInProps) {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-
+    const navigate = useNavigate();
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError("");
@@ -34,6 +36,16 @@ export default function SignIn({ onLogin }: SignInProps) {
             setLoading(false);
         }
     };
+
+    const validData = async (email: string, password: string) => {
+        alert("Successfully sign ined");
+        const result = await AuthContext({ email, password });
+        if (result.success) {
+            navigate("/Profile");
+        } else {
+            alert(result.message);
+        }
+    }
 
     return (
         <div className="min-h-screen bg-[#f8f7f4] flex items-center justify-center p-4">
@@ -200,6 +212,9 @@ export default function SignIn({ onLogin }: SignInProps) {
                         <button
                             type="submit"
                             disabled={loading}
+                            onClick={() => {
+                                validData(email, password);
+                            }}
                             className="w-full bg-[#202020] hover:bg-orange-500 disabled:opacity-60 text-white font-semibold py-3.5 rounded-xl transition-all duration-300"
                         >
                             {loading ? "Signing in..." : "Sign In"}
