@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { ARTIST_DATA } from "./dummydata";
+import BuyerProfile from "./BuyerProfile";
 
 interface UserData {
     avatar: string,
@@ -66,8 +67,7 @@ export default function ArtistProfile() {
     }, [])
 
 
-
-    return (
+    const sellerProf = (
         <div className="min-h-screen bg-stone-50 text-stone-900 pb-16">
             {/* Top Bar */}
             <div className="bg-white border-b border-stone-200 px-6 py-3 flex justify-between items-center">
@@ -85,15 +85,15 @@ export default function ArtistProfile() {
                 <div className="bg-white rounded-2xl border border-stone-200 p-6 md:p-8 shadow-sm flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
                     <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center">
                         <img
-                            src={ARTIST_DATA.avatar}
-                            alt={ARTIST_DATA.name}
+                            src={user.avatar}
+                            alt={user.name}
                             className="w-20 h-20 rounded-full object-cover border-2 border-amber-600"
                         />
                         <div>
                             <div className="flex flex-wrap items-center gap-2">
                                 <h1 className="text-2xl font-bold text-stone-900">{user.name}</h1>
                                 <span className="text-xs bg-green-100 text-green-800 px-2.5 py-0.5 rounded-full font-semibold">
-                                    ✓ {ARTIST_DATA.completedOrders} Orders Completed
+                                    ✓ {user.completedOrders} Orders Completed
                                 </span>
                             </div>
                             <p className="text-sm text-stone-500 mt-0.5">
@@ -246,5 +246,10 @@ export default function ArtistProfile() {
                 </section>
             </div>
         </div>
+    )
+    return (
+        <>
+            {user.role !== "artist" ? <BuyerProfile /> : sellerProf}
+        </>
     );
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 // ==========================================
 // 1. TYPES & INTERFACES
@@ -107,10 +107,13 @@ const CATEGORIES: CategoryFilter[] = [
 // ==========================================
 // 4. HOME COMPONENT
 // ==========================================
-
+interface userType {
+    name: string,
+    avtar: string
+}
 export default function Home() {
     const navigate = useNavigate();
-
+    const [islogin, setLogin] = useState(false);
     // State Types
     const [selectedCategory, setSelectedCategory] =
         useState<CategoryFilter>("All");
@@ -123,6 +126,10 @@ export default function Home() {
 
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
+    const [user, setUser] = useState<userType>({
+        name: "",
+        avtar: "",
+    })
     // ==========================================
     // 5. TOGGLE PROOF
     // ==========================================
@@ -154,15 +161,95 @@ export default function Home() {
 
     });
 
+    useEffect(() => {
+        async function getData() {
+            try {
+                const response = await fetch("http://localhost:3000/Profile", {
+                    method: "GET",
+                    credentials: "include"
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log("This is response:- ", data);
+                    setUser({ name: data.user.name, avtar: data.user.avatar })
+                    setLogin(true);
+                }
+            } catch (err: unknown) {
+                if (err instanceof Error) {
+                    console.log(err.message);
+                } else {
+                    console.log("There is an error :- ", err)
+                }
+            }
+        }
+        getData()
+    }, [])
 
+    const loginBtn = (
+        <>
+            <button onClick={() => navigate("/signup")}
+                className="text-sm font-medium text-stone-600 hover:text-stone-900">
+                Join as Artist
+            </button>
+            <button onClick={() => navigate("/signin")}
+                className="bg-stone-900 text-white text-sm px-4 py-2 rounded-lg hover:bg-stone-800">
+                Login
+            </button>
+        </>
+    )
+    const loginforMObile = (
+        <>
+            <button
+                onClick={() => {
+                    navigate("/signup");
+                    setIsMenuOpen(false);
+                }}
+                className="text-left py-2 text-stone-600">
+                Join as Artist
+            </button>
+
+            <button
+                onClick={() => {
+                    navigate("/signin");
+                    setIsMenuOpen(false);
+                }}
+                className="bg-stone-900 text-white px-4 py-2 rounded-lg">
+                Login
+            </button>
+        </>
+    )
     // ==========================================
     // 7. JSX
     // ==========================================
+    const showSections = (
+        <>
+            <ul className="px-2 md:flex hidden items-center justify-around gap-5">
+                <li>Profile</li>
+                <li>Settings</li>
+                <li>Profile</li>
+                <li className="cursor-pointer" onClick={() => {
+                    navigate("/Profile")
+                }}>Profile</li>
+            </ul>
+        </>
+    )
 
     return (
-
         <div className="min-h-screen bg-stone-50 text-stone-900">
 
+
+            {/* Lower navbar for routing */}
+            <div className="w-full md:hidden flex items-center justify-around gap-5 z-1000 h-12 fixed bottom-0 left-0 p-3 bg-white">
+                <img className="w-7 h-7 bg-black rounded-2xl" src={undefined} alt={"yash"} />
+                <img className="w-7 h-7 bg-black rounded-2xl" src={undefined} alt={"yash"} />
+                <img className="w-7 h-7 bg-black rounded-2xl" src={undefined} alt={"yash"} />
+                <button onClick={() => {
+                    navigate("/Profile");
+                }} className="rounded-2xl">
+                    <img className="w-7 h-7 bg-gray-500 rounded-2xl" src={user.avtar || undefined} alt={user.name || undefined} />
+                </button>
+
+            </div>
             {/* Top Navbar */}
 
             <nav className="bg-white border-b border-stone-200 px-6 py-4 sticky top-0 z-50">
@@ -180,19 +267,11 @@ export default function Home() {
                         </span>
                     </div>
 
+                    {islogin ? showSections : ""}
+
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex gap-4 items-center">
-
-                        <button onClick={() => navigate("/signup")}
-                            className="text-sm font-medium text-stone-600 hover:text-stone-900">
-                            Join as Artist
-                        </button>
-
-                        <button onClick={() => navigate("/signin")}
-                            className="bg-stone-900 text-white text-sm px-4 py-2 rounded-lg hover:bg-stone-800">
-                            Login
-                        </button>
-
+                        {islogin ? "" : loginBtn}
                     </div>
 
                     {/* Mobile Hamburger */}
@@ -210,25 +289,7 @@ export default function Home() {
                 {/* Mobile Navigation */}
                 {isMenuOpen && (
                     <div className="md:hidden flex flex-col gap-3 pt-4">
-
-                        <button
-                            onClick={() => {
-                                navigate("/signup");
-                                setIsMenuOpen(false);
-                            }}
-                            className="text-left py-2 text-stone-600">
-                            Join as Artist
-                        </button>
-
-                        <button
-                            onClick={() => {
-                                navigate("/signin");
-                                setIsMenuOpen(false);
-                            }}
-                            className="bg-stone-900 text-white px-4 py-2 rounded-lg">
-                            Login
-                        </button>
-
+                        {islogin ? <></> : loginforMObile}
                     </div>
                 )}
 
