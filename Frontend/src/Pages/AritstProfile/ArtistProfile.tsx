@@ -20,6 +20,7 @@ interface UserData {
 }
 
 export default function ArtistProfile() {
+    const [isEdit, setEdit] = useState(false);
     const [activeTab, setActiveTab] = useState("all"); // 'all' | 'ready_to_ship' | 'reviews'
     const [copied, setCopied] = useState(false);
     const [showProofMap, setShowProofMap] = useState({});
@@ -35,11 +36,6 @@ export default function ArtistProfile() {
         username: ""
     });
 
-    const handleCopyLink = () => {
-        navigator.clipboard.writeText(window.location.href);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-    };
 
     const toggleProof = (id) => {
         setShowProofMap((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -66,18 +62,22 @@ export default function ArtistProfile() {
         getData();
     }, [])
 
-
+    const editProfile = (
+        <>
+            <div className="w-full fixed top-17 left-0 h-screen bg-[rgba(255,255,255,0.3)] backdrop-blur-[5px]">
+                <span onClick={() => {
+                    setEdit(!isEdit);
+                }} className="text-2xl cursor-pointer fixed text-end ml-[50%]">×</span>
+            </div>
+        </>
+    )
     const sellerProf = (
         <div className="min-h-screen bg-stone-50 text-stone-900 pb-16">
-            {/* Top Bar */}
-            <div className="bg-white border-b border-stone-200 px-6 py-3 flex justify-between items-center">
-                <a href="/" className="text-xl font-bold text-amber-700">← KalaSetu</a>
-                <button
-                    onClick={handleCopyLink}
-                    className="text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-stone-800 px-3 py-1.5 rounded-full border border-stone-300"
-                >
-                    {copied ? "✅ Link Copied!" : "🔗 Share Portfolio"}
-                </button>
+            {isEdit ? editProfile : ""}
+            <div className="w-full text-end lg:px-10 pt-2 px-5">
+                <button onClick={() => {
+                    setEdit(!isEdit);
+                }} className="border-0 cursor-pointer p-2 rounded-lg bg-gray-200">edit profile</button>
             </div>
 
             <div className="max-w-5xl mx-auto px-6 pt-8">
