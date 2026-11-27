@@ -55,7 +55,6 @@ export default function ArtistProfile() {
             })
             if (response) {
                 const data = await response.json();
-                console.log("Data is here:- ", data.user);
                 setuser(data.user);
             }
         }
@@ -64,10 +63,58 @@ export default function ArtistProfile() {
 
     const editProfile = (
         <>
-            <div className="w-full fixed top-17 left-0 h-screen bg-[rgba(255,255,255,0.3)] backdrop-blur-[5px]">
+            <div className="w-full p-5 fixed z-1000 flex items-center justify-start flex-col gap-5 top-17 left-0 h-full bg-[rgba(255,255,255,0.3)] backdrop-blur-[5px]">
                 <span onClick={() => {
                     setEdit(!isEdit);
-                }} className="text-2xl cursor-pointer fixed text-end ml-[50%]">×</span>
+                }} className="text-2xl cursor-pointer text-end">×</span>
+                <div className="w-full overflow-y-auto [&::-webkit-scrollbar]:hidden h-[85%] border border-[#ddd] shadow-[0px_0px_10px_#ddd] p-6 bg-white rounded-2xl">
+                    <form className="grid grid-cols-1 md:grid-cols-1 gap-2">
+                        <label className="w-full flex items-center justify-between">
+                            <h1 className="text-lg">Edit Profile</h1>
+                            <button type="button" className="px-3 p-1 text-[#1d1d1d] font-bold text-lg bg-[#e0e0e0]">Done</button>
+                        </label>
+                        <br />
+                        <label className="shrink-0 flex flex-col gap-2" htmlFor="name">
+                            Name
+                            <input value={user.name} spellCheck={false} type="text" id="name" className="p-2 rounded-[5px] border border-[#ddd]" placeholder="Enter name" />
+                        </label>
+                        <label className="shrink-0 flex flex-col gap-2" htmlFor="username">
+                            Username
+                            <input value={user.username} spellCheck={false} type="text" id="username" className="p-2 rounded-[5px] border border-[#ddd]" placeholder="Change username" />
+                        </label>
+                        <label className="shrink-0 flex flex-col gap-2" htmlFor="cityname">
+                            City/Town
+                            <input value={user.city} spellCheck={false} type="text" id="cityname" className="p-2 rounded-[5px] border border-[#ddd]" placeholder="Enter city name" />
+                        </label>
+                        <label className="shrink-0 flex flex-col gap-2" htmlFor="bio">
+                            Bio
+                            <textarea value={user.bio} placeholder="Enter your Bio here" className="border resize-none rounded-lg p-2 h-20 border-[#ddd]" name="bio" id="bio"></textarea>
+                        </label>
+                        <label htmlFor="shrink-0 interested  fields">
+                            Select your interests
+                            <select className="p-2 shrink-0 " multiple={true} name="interests" id="interests">
+                                <option className="p-1" value="Sketching">Sketching</option>
+                                <option className="p-1" value="Painting">Painting</option>
+                                <option className="p-1" value="Oil painting">Oil Painting</option>
+                                <option className="p-1" value="Charcol">Charcol</option>
+                            </select>
+                        </label>
+                        <hr className="border-[#ddd]" />
+                        <label className="shrink-0 flex w-full justify-between " htmlFor="orders">
+                            <span className="text-lg">Taking Custom Orders</span>
+                            <select className="p-1 focus:outline-0 shrink-0 " name="orders" id="orders">
+                                <option className="p-1" value="Sketching">Yes</option>
+                                <option className="p-1" value="Painting">No</option>
+                            </select>
+                        </label>
+                        <br />
+                        <label htmlFor="DelivaryDays">
+                            Average Delivary Days
+                        </label>
+                        <input value={user.avgDeliveryDays} spellCheck={false} type="number" id="DelivaryDays" className="p-2 rounded-[5px] border border-[#ddd]" placeholder="Enter average delivary days" />
+
+                    </form>
+                </div>
             </div>
         </>
     )
