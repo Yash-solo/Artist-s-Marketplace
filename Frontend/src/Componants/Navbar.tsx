@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 interface propsData {
     islogin: boolean,
@@ -8,6 +8,9 @@ interface propsData {
 const Navbar = (props: propsData) => {
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
     const navigate = useNavigate();
+    useEffect(() => {
+        console.log("Hello world:-  islogin:- ", props.islogin);
+    }, [props.islogin])
     const loginBtn = (
         <>
             <button onClick={() => navigate("/signup")}
@@ -57,6 +60,7 @@ const Navbar = (props: propsData) => {
             </div>
         </>
     )
+
     return (
         <>
             <nav className="bg-white border-b border-stone-200 px-6 lg:px-0 py-4 sticky top-0 z-50">
@@ -96,13 +100,14 @@ const Navbar = (props: propsData) => {
                 {/* Mobile Navigation */}
                 {isMenuOpen && (
                     <div className="md:hidden flex flex-col gap-3 pt-4">
-                        <ul className="px-2 md:hidden flex flex-col lg:text-lg items-center justify-around gap-10">
-                            <li className="cursor-pointer" onClick={() => {
-                                navigate("/");
-                            }}>Home</li>
-                            <li className="cursor-pointer">Settings</li>
-                            <li className="cursor-pointer">Contact us</li>
-                        </ul>
+                        {props.islogin ? <>
+                            <ul className="px-2 md:hidden flex flex-col lg:text-lg items-center justify-around gap-10">
+                                <li className="cursor-pointer" onClick={() => {
+                                    navigate("/");
+                                }}>Home</li>
+                                <li className="cursor-pointer">Settings</li>
+                                <li className="cursor-pointer">Contact us</li>
+                            </ul></> : ""};
                         {props.islogin ? <>
                         </> : loginforMObile}
                     </div>

@@ -59,3 +59,13 @@ export const getMyprofile = async(req,res)=>{
         res.status(401).json({ message:"Invalid Token" })
     }
 }
+
+export const changeUserData = async(req,res)=>{
+    console.log(req.body);
+    const updateUser = await User.updateOne({name:req.body.name},{
+        $set:req.body
+    });
+    if(updateUser===null){
+        return "No user Found";
+    }
+}

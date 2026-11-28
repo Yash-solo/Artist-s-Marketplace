@@ -1,6 +1,6 @@
 import { connectDB } from "./database/db.js";
 import mongoose from 'mongoose';
-import { signIn, getMyprofile } from "./controllers/authController.js";
+import { signIn, getMyprofile,changeUserData} from "./controllers/authController.js";
 import { User } from "./models/User.model.js";
 import { app } from "./app.js";
 import "dotenv/config"
@@ -32,6 +32,8 @@ connectDB()
     app.post("/signin",signIn);
 
     app.get("/Profile", getMyprofile);
+
+    app.post("/changeData",changeUserData);
 
     app.listen(process.env.PORT,()=>{
         console.log("App is listening at localhost:",process.env.PORT);

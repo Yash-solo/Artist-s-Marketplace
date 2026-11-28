@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { ARTIST_DATA } from "./dummydata";
 import BuyerProfile from "./BuyerProfile";
 
@@ -22,9 +22,7 @@ interface UserData {
 export default function ArtistProfile() {
     const [isEdit, setEdit] = useState(false);
     const [activeTab, setActiveTab] = useState("all"); // 'all' | 'ready_to_ship' | 'reviews'
-    const [copied, setCopied] = useState(false);
     const [showProofMap, setShowProofMap] = useState({});
-
     const [user, setuser] = useState<UserData>({
         avatar: "",
         avgDeliveryDays: 0,
@@ -61,34 +59,78 @@ export default function ArtistProfile() {
         getData();
     }, [])
 
+    function debounce<Args extends unknown[], Return>(
+        fn: (...args: Args) => Return,
+        delay: number
+    ) {
+        let timer: ReturnType<typeof setTimeout>;
+
+        return (...args: Args): void => {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                fn(...args);
+            }, delay);
+        };
+    }
+
+    const updateData = async (udata: typeof user) => {
+        try {
+            const response = await fetch("http://localhost:3000/changeData", {
+                method: "POST",
+                headers: { "Content-type": "application/json" },
+                body: JSON.stringify(udata)
+            })
+            if (response) {
+                return
+            }
+        } catch (err) {
+            if (err instanceof Error) {
+                console.log("Error came:- ", err.message);
+            }
+
+            console.log("error came:- ", err);
+        }
+    }
+    // useMemo se 'debouncedUpdate' ko sirf ek baar banayein
+    const newData = useMemo(() => debounce(updateData, 1000), []);
+
+    //handle only input element and text area element and change the user first
+    const handleEdit = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setuser({
+            ...user,
+            [e.target.name]: e.target.value
+        })
+        console.log("Debouncing checking right now");
+        newData(user);
+    }
+
     const editProfile = (
         <>
             <div className="w-full p-5 fixed z-1000 flex items-center justify-start flex-col gap-5 top-17 left-0 h-full bg-[rgba(255,255,255,0.3)] backdrop-blur-[5px]">
-                <span onClick={() => {
-                    setEdit(!isEdit);
-                }} className="text-2xl cursor-pointer text-end">×</span>
                 <div className="w-full overflow-y-auto [&::-webkit-scrollbar]:hidden h-[85%] border border-[#ddd] shadow-[0px_0px_10px_#ddd] p-6 bg-white rounded-2xl">
                     <form className="grid grid-cols-1 md:grid-cols-1 gap-2">
                         <label className="w-full flex items-center justify-between">
                             <h1 className="text-lg">Edit Profile</h1>
-                            <button type="button" className="px-3 p-1 text-[#1d1d1d] font-bold text-lg bg-[#e0e0e0]">Done</button>
+                            <button onClick={() => {
+                                setEdit(!isEdit);
+                            }} type="button" className="px-3 p-1 text-[#1d1d1d] font-bold text-lg bg-[#e0e0e0]">Done</button>
                         </label>
                         <br />
                         <label className="shrink-0 flex flex-col gap-2" htmlFor="name">
                             Name
-                            <input value={user.name} spellCheck={false} type="text" id="name" className="p-2 rounded-[5px] border border-[#ddd]" placeholder="Enter name" />
+                            <input onChange={handleEdit} name={"name"} value={user.name} spellCheck={false} type="text" id="name" className="p-2 rounded-[5px] border border-[#ddd]" placeholder="Enter name" />
                         </label>
                         <label className="shrink-0 flex flex-col gap-2" htmlFor="username">
                             Username
-                            <input value={user.username} spellCheck={false} type="text" id="username" className="p-2 rounded-[5px] border border-[#ddd]" placeholder="Change username" />
+                            <input onChange={handleEdit} name="username" value={user.username} spellCheck={false} type="text" id="username" className="p-2 rounded-[5px] border border-[#ddd]" placeholder="Change username" />
                         </label>
                         <label className="shrink-0 flex flex-col gap-2" htmlFor="cityname">
                             City/Town
-                            <input value={user.city} spellCheck={false} type="text" id="cityname" className="p-2 rounded-[5px] border border-[#ddd]" placeholder="Enter city name" />
+                            <input onChange={handleEdit} name="city" value={user.city} spellCheck={false} type="text" id="cityname" className="p-2 rounded-[5px] border border-[#ddd]" placeholder="Enter city name" />
                         </label>
                         <label className="shrink-0 flex flex-col gap-2" htmlFor="bio">
                             Bio
-                            <textarea value={user.bio} placeholder="Enter your Bio here" className="border resize-none rounded-lg p-2 h-20 border-[#ddd]" name="bio" id="bio"></textarea>
+                            <textarea onChange={handleEdit} name="bio" value={user.bio} placeholder="Enter your Bio here" className="border resize-none rounded-lg p-2 h-20 border-[#ddd]" name="bio" id="bio"></textarea>
                         </label>
                         <label htmlFor="shrink-0 interested  fields">
                             Select your interests
@@ -111,7 +153,7 @@ export default function ArtistProfile() {
                         <label htmlFor="DelivaryDays">
                             Average Delivary Days
                         </label>
-                        <input value={user.avgDeliveryDays} spellCheck={false} type="number" id="DelivaryDays" className="p-2 rounded-[5px] border border-[#ddd]" placeholder="Enter average delivary days" />
+                        <input onChange={handleEdit} name="avgDeliveryDays" value={user.avgDeliveryDays} spellCheck={false} type="number" id="DelivaryDays" className="p-2 rounded-[5px] border border-[#ddd]" placeholder="Enter average delivary days" />
 
                     </form>
                 </div>

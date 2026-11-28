@@ -31,8 +31,12 @@ export const AuthContext = async (props: propsType): Promise<SignInResponse> => 
                 body: JSON.stringify({ "Email": props.email, "Password": props.password })
             });
             const data = await response.json();
-            //get user complete data and plan to distribute it . 
-            console.log("data after contexts:- ", data);
+            //get user complete data and plan to distribute it .
+            if (data.message !== undefined) {
+                alert(data.message);
+            } else {
+                console.log("data after context:- ", data);
+            }
 
             //check if get response 
             if (!response.ok) {
